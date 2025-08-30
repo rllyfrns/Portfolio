@@ -18,6 +18,503 @@
     <link href="css/styles.css" rel="stylesheet" />
 
     <style>
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #bd5d38 0%, #e8491d 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        .loading-screen.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        /* GIF Loading Animation */
+        .loader {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .loader-gif {
+            width: 220px;
+            height: 220px;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+
+        /* Fallback CSS animation if GIF doesn't load */
+        .loader-fallback {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Loading Text */
+        .loading-text {
+            color: white;
+            font-family: 'Saira Extra Condensed', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            font-size: 24px;
+            font-weight: 500;
+            letter-spacing: 3px;
+            animation: pulse 2s ease-in-out infinite;
+            text-transform: uppercase;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0.7;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 300px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            margin-top: 30px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ffffff, #ffffff80);
+            border-radius: 2px;
+            animation: progress 2.5s ease-out forwards;
+            width: 0%;
+        }
+
+        @keyframes progress {
+            0% {
+                width: 0%;
+            }
+
+            25% {
+                width: 35%;
+            }
+
+            50% {
+                width: 70%;
+            }
+
+            80% {
+                width: 95%;
+            }
+
+            100% {
+                width: 100%;
+            }
+        }
+
+        /* Hide main content initially */
+        #page-content {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+
+        #page-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Brand Name in Loading */
+        .brand-name {
+            color: white;
+            font-family: 'Saira Extra Condensed', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            margin-top: 20px;
+            letter-spacing: 2px;
+        }
+
+        /* Simple hover effect */
+        .list-inline-item:hover {
+            transform: translateY(-4px);
+        }
+
+        /* Tooltip styles */
+        .tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            margin-bottom: 10px;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #333;
+        }
+
+        .list-inline-item:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(-5px);
+        }
+    </style>
+</head>
+<!-- Loading Screen -->
+<div class="loading-screen" id="loadingScreen">
+    <div class="loader">
+        <!-- Replace this URL with your own GIF -->
+        <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExZXA1MDRkanptNGxlN3c2cGV2MGsxcnAzMW5tczZ0Y2hnOHAzNTNhMSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/aT564S32DojlSN369u/giphy.gif"
+            alt="Loading..." class="loader-gif"
+            onerror="this.style.display='none'; document.getElementById('fallbackLoader').style.display='block';">
+        <!-- Fallback CSS animation if GIF fails to load -->
+        <div class="loader-fallback" id="fallbackLoader" style="display: none;"></div>
+    </div>
+    <div class="loading-text">Loading</div>
+    <div class="brand-name">RTolin's Portfolio</div>
+    <div class="progress-container">
+        <div class="progress-bar"></div>
+    </div>
+</div>
+
+<body id="page-top">
+    <!-- Navigation-->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top" id="sideNav">
+        <a class="navbar-brand js-scroll-trigger" href="#page-top">
+            <span class="d-block d-lg-none">Relly Frans S. Tolin</span>
+            <span class="d-none d-lg-block"><img class="img-fluid img-profile rounded-circle mx-auto mb-2"
+                    src="assets/img/profile.jpg" alt="..." /></span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive"
+            aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span
+                class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#about">About</a></li>
+                <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#experience">Experience</a></li>
+                <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#education">Education</a></li>
+                <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#skills">Skills</a></li>
+                <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#interests">Interests</a></li>
+                <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#awards">Awards</a></li>
+            </ul>
+        </div>
+    </nav>
+    <!-- Page Content-->
+    <div class="container-fluid p-0">
+        <!-- About-->
+        <section class="resume-section" id="about">
+            <div class="resume-section-content">
+                <h1 class="mb-0">
+                    Relly Frans S.
+                    <span class="text-primary">Tolin</span>
+                </h1>
+                <div class="subheading mb-5">
+                    Cay Pombo · Santa Maria · Bulacan · (63+) 969 1991 340 ·
+                    <a href="mailto:rellytolin@gmail.com">rellytolin@gmail.com</a>
+                </div>
+                <p class="lead mb-5">I’m passionate about helping people turn their ideas into simple and effective
+                    solutions. I enjoy working with others, finding better ways to improve results, and making
+                    sure the outcome is both useful and easy to use.</p>
+                <div class="social-icons">
+                    <a class="social-icon" href="#!"><i class="fab fa-linkedin-in"></i></a>
+                    <a class="social-icon" href="https://github.com/rllyfrns?tab=repositories" target="_blank">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a class="social-icon" href="#!"><i class="fab fa-twitter"></i></a>
+                    <a class="social-icon" href="#!"><i class="fab fa-facebook-f"></i></a>
+                </div>
+            </div>
+        </section>
+        <hr class="m-0" />
+        <!-- Experience-->
+        <section class="resume-section" id="experience">
+            <div class="resume-section-content">
+                <h2 class="mb-5">Experience</h2>
+                <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                    <div class="flex-grow-1">
+                        <h3 class="mb-0">Hooli Software Inc.</h3>
+                        <div class="subheading mb-3">Software Engineer (Intern)</div>
+                        <p>At Hooli, I worked on improving and expanding the company’s web applications. My role
+                            included fixing bugs, making designs responsive, adding new features and pages, and
+                            developing AI-driven front-end components. I also worked on feeding front-end layouts into
+                            AI systems while collaborating closely with QA and the Technical Designer to ensure smooth
+                            functionality and a polished user experience.</p>
+                    </div>
+                    <div class="flex-shrink-0"><span class="text-primary">February - May 2025</span></div>
+                </div>
+                <h2 class="mb-5">Project</h2>
+                <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                    <div class="flex-grow-1">
+                        <h3 class="mb-0">iChemical</h3>
+                        <div class="subheading mb-3">Programmer</div>
+                        <p>iChemical is an inventory management system designed to streamline the chemical production
+                            process. As the programmer, I developed the system to allow users to purchase raw materials,
+                            combine them to create finished products, and track those products through delivery. The
+                            system automatically monitors inventory levels at each stage from raw materials to
+                            finished goods ensuring accurate stock management and efficient operations.</p>
+                    </div>
+                    <div class="flex-shrink-0"><span class="text-primary">July - Nov 2024</span></div>
+                </div>
+
+            </div>
+        </section>
+        <hr class="m-0" />
+        <!-- Education-->
+        <section class="resume-section" id="education">
+            <div class="resume-section-content">
+                <h2 class="mb-5">Education</h2>
+                <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                    <div class="flex-grow-1">
+                        <h3 class="mb-0">STI College Sta. Maria</h3>
+                        <div class="subheading ">Bachelor of Science in Information Technology</div>
+                        <p>Poblacion, Santa Maria, Bulacan</p>
+                    </div>
+                    <div class="flex-shrink-0"><span class="text-primary">2021 - 2025</span></div>
+                </div>
+                <div class="d-flex flex-column flex-md-row justify-content-between">
+                    <div class="flex-grow-1">
+                        <h3 class="mb-0">Grace of Schekinah School</h3>
+                        <div class="subheading">Science, Technology, Engineering, and Mathematics (STEM)</div>
+                        <p>Poblacion, Santa Maria, Bulacan</p>
+                    </div>
+                    <div class="flex-shrink-0"><span class="text-primary">2019 - 2021</span></div>
+                </div>
+            </div>
+        </section>
+        <hr class="m-0" />
+        <!-- Skills-->
+        <section class="resume-section" id="skills">
+            <div class="resume-section-content">
+                <h2 class="mb-5">Skills</h2>
+                <div class="subheading mb-3">Programming & Development Tools</div>
+                <ul class="list-inline dev-icons">
+                    <li class="list-inline-item" data-name="HTML5">
+                        <i class="fab fa-html5"></i>
+                        <div class="tooltip">HTML5</div>
+                    </li>
+                    <li class="list-inline-item" data-name="CSS3">
+                        <i class="fab fa-css3-alt"></i>
+                        <div class="tooltip">CSS3</div>
+                    </li>
+                    <li class="list-inline-item" data-name="JavaScript">
+                        <i class="fab fa-js-square"></i>
+                        <div class="tooltip">JavaScript</div>
+                    </li>
+                    <li class="list-inline-item" data-name="PHP">
+                        <i class="fab fa-php"></i>
+                        <div class="tooltip">PHP</div>
+                    </li>
+                    <li class="list-inline-item" data-name="Java">
+                        <i class="fab fa-java"></i>
+                        <div class="tooltip">Java</div>
+                    </li>
+                    <li class="list-inline-item" data-name="React">
+                        <i class="fab fa-react"></i>
+                        <div class="tooltip">React</div>
+                    </li>
+                    <li class="list-inline-item" data-name="Bootstrap">
+                        <i class="fab fa-bootstrap"></i>
+                        <div class="tooltip">Bootstrap</div>
+                    </li>
+                    <li class="list-inline-item" data-name="Tailwind CSS">
+                        <svg width="44" height="44" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12.001,4.8c-3.2,0-5.2,1.6-6,4.8c1.2-1.6,2.6-2.2,4.2-1.8c0.913,0.228,1.565,0.89,2.288,1.624 C13.666,10.618,15.027,12,18.001,12c3.2,0,5.2-1.6,6-4.8c-1.2,1.6-2.6,2.2-4.2,1.8c-0.913-0.228-1.565-0.89-2.288-1.624 C16.337,6.182,14.976,4.8,12.001,4.8z M6.001,12c-3.2,0-5.2,1.6-6,4.8c1.2-1.6,2.6-2.2,4.2-1.8c0.913,0.228,1.565,0.89,2.288,1.624 C7.666,17.818,9.027,19.2,12.001,19.2c3.2,0,5.2-1.6,6-4.8c-1.2,1.6-2.6,2.2-4.2,1.8c-0.913-0.228-1.565-0.89-2.288-1.624 C10.337,14.382,8.976,13,6.001,12z" />
+                        </svg>
+                        <div class="tooltip">Tailwind CSS</div>
+                    </li>
+                    <li class="list-inline-item" data-name="GitHub">
+                        <i class="fab fa-github"></i>
+                        <div class="tooltip">GitHub</div>
+                    </li>
+                    <li class="list-inline-item" data-name="Sourcetree">
+                        <i class="fab fa-sourcetree"></i>
+                        <div class="tooltip">Sourcetree</div>
+                    </li>
+                    <li class="list-inline-item" data-name="Atlassian">
+                        <i class="fab fa-atlassian"></i>
+                        <div class="tooltip">Atlassian</div>
+                    </li>
+                    <li class="list-inline-item" data-name="Database">
+                        <i class="fas fa-database"></i>
+                        <div class="tooltip">Database</div>
+                    </li>
+                </ul>
+                <div class="subheading mb-3">Workflow</div>
+                <ul class="fa-ul mb-0">
+                    <li>
+                        <span class="fa-li"><i class="fas fa-check"></i></span>
+                        Cross Browser Testing & Debugging
+                    </li>
+                    <li>
+                        <span class="fa-li"><i class="fas fa-check"></i></span>
+                        Mobile Responsive Design
+                    </li>
+                    <li>
+                        <span class="fa-li"><i class="fas fa-check"></i></span>
+                        Cross Functional Teams
+                    </li>
+                    <li>
+                        <span class="fa-li"><i class="fas fa-check"></i></span>
+                        Agile Development & Scrum
+                    </li>
+                </ul>
+            </div>
+        </section>
+        <hr class="m-0" />
+        <!-- Interests-->
+        <section class="resume-section" id="interests">
+            <div class="resume-section-content">
+                <h2 class="mb-5">Interests</h2>
+                <p>Apart from being a web developer, I like spending time outdoors and finding simple ways to enjoy
+                    life. Whether it’s taking a walk, exploring new spots, or just getting some fresh air, being outside
+                    helps me recharge and stay inspired. I also enjoy playing games, which keep me sharp while letting
+                    me relax and have fun.</p>
+                <p class="mb-0">Family and friends are a big part of my life, and I always make time to bond with them.
+                    Whether it’s hanging out, sharing a meal, or just catching up, those moments keep me grounded and
+                    motivated in everything I do.</p>
+            </div>
+        </section>
+        <hr class="m-0" />
+        <!-- Awards-->
+        <section class="resume-section" id="awards">
+            <div class="resume-section-content">
+                <h2 class="mb-5">Awards & Certifications</h2>
+                <ul class="fa-ul mb-0">
+                    <li>
+                        <span class="fa-li"><i class="fas fa-trophy text-warning"></i></span>
+                        <span style="font-weight: 600; color: #727171;">Cum Laude</span>
+                    </li>
+
+                    <li>
+                        <span class="fa-li"></span>
+                        Certification of Completion - Internship at Hooli Software, Inc. (2025)
+                    </li>
+                    <li>
+                        <span class="fa-li"></i></span>
+                        Course Completion - Introduction to HTML by Sololearn (2024)
+                    </li>
+                    <li>
+                        <span class="fa-li"></span>
+                        Course Completion - Java Foundation by Oracle (2022)
+                    </li>
+                    <li>
+                        <span class="fa-li"></span>
+                        Course Completion - Systems Administration (2022)
+                    </li>
+                    <li>
+                        <span class="fa-li"></span>
+                        Certificate of Attendance - Encrypt IT: Cybersecurity Seminar (2022)
+                    </li>
+                </ul>
+
+            </div>
+        </section>
+    </div>
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Core theme JS-->
+    <script src="js/scripts.js"></script>
+    <script>
+        // Show loading animation on page load
+        window.addEventListener('load', function () {
+            setTimeout(() => {
+                hideLoader();
+            }, 2500); // Show loader for 2.5 seconds
+        });
+
+        function hideLoader() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            const pageContent = document.getElementById('page-content');
+
+            loadingScreen.classList.add('fade-out');
+
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+                pageContent.classList.add('show');
+            }, 800);
+        }
+
+        // Optional: Show loader on page refresh
+        window.addEventListener('beforeunload', function () {
+            const loadingScreen = document.getElementById('loadingScreen');
+            if (loadingScreen) {
+                loadingScreen.style.display = 'flex';
+                loadingScreen.classList.remove('fade-out');
+            }
+        });
+    </script>
+</body>
+
+</html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>RTolin's Portfolio</title>
+    <link rel="icon" type="image/x-icon" href="assets/img/favicon.png" />
+    <!-- Font Awesome icons (free version)-->
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <!-- Google fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Saira+Extra+Condensed:500,700" rel="stylesheet"
+        type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Muli:400,400i,800,800i" rel="stylesheet" type="text/css" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="css/styles.css" rel="stylesheet" />
+
+    <style>
         
         /* Loading Screen */
         .loading-screen {
